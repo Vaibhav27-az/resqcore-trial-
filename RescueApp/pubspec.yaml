@@ -1,0 +1,35 @@
+name: rescue_app
+description: "Tactical Emergency Operations - Uttarakhand Disaster Response Mobile Application"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  http: ^1.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - rescueteam_emergency_sos/screen.png
+    - rescueteam_home_dashboard/screen.png
+    - rescueteam_incident_list/screen.png
+    - rescueteam_live_map/screen.png
+    - rescueteam_login_demo_access/screen.png
+    - rescueteam_shelters_casualty_triage/screen.png
+    - rescueteam_tactical_team_chat/screen.png
+    - rescueteam_teams_member_gps/screen.png
+    - assets/images/
+    - assets/images/scenarios/

@@ -1,0 +1,169 @@
+/* ResQCore - Design System & Global Styles */
+:root {
+  --bg-dark: #070C16;
+  --bg-sidebar: #060A13;
+  --bg-card: #0D1527;
+  --bg-card-hover: #121E36;
+  --bg-input: #0A101E;
+  
+  --border-subtle: #162238;
+  --border-medium: #1F304E;
+  --border-active: #2E4774;
+
+  --text-main: #FFFFFF;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  --text-dim: #475569;
+
+  /* Primary Blue */
+  --primary-blue: #2563EB;
+  --primary-blue-hover: #3B82F6;
+  --primary-blue-light: #60A5FA;
+  --primary-blue-bg: rgba(37, 99, 235, 0.15);
+
+  /* Status & Severity Colors */
+  --severity-high: #EF4444;
+  --severity-high-bg: rgba(239, 68, 68, 0.12);
+  --severity-high-border: rgba(239, 68, 68, 0.28);
+
+  --severity-medium: #F59E0B;
+  --severity-medium-bg: rgba(245, 158, 11, 0.12);
+  --severity-medium-border: rgba(245, 158, 11, 0.28);
+
+  --severity-info: #38BDF8;
+  --severity-info-bg: rgba(56, 189, 248, 0.12);
+  --severity-info-border: rgba(56, 189, 248, 0.28);
+
+  --status-deployed: #10B981;
+  --status-deployed-bg: rgba(16, 185, 129, 0.12);
+  --status-deployed-border: rgba(16, 185, 129, 0.28);
+
+  --status-available: #3B82F6;
+  --status-available-bg: rgba(59, 130, 246, 0.12);
+  --status-available-border: rgba(59, 130, 246, 0.28);
+
+  --status-escalated: #F59E0B;
+  --status-escalated-bg: rgba(245, 158, 11, 0.12);
+  --status-escalated-border: rgba(245, 158, 11, 0.28);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  --shadow-popup: 0 12px 36px 0 rgba(0, 0, 0, 0.7);
+  --shadow-glow-blue: 0 0 24px -4px rgba(37, 99, 235, 0.35);
+  --shadow-glow-red: 0 0 24px -4px rgba(239, 68, 68, 0.35);
+  --shadow-glow-green: 0 0 24px -4px rgba(16, 185, 129, 0.35);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Tactical Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-active);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: all 0.15s ease-in-out;
+}
+
+input, select, textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Global utility classes */
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.08); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

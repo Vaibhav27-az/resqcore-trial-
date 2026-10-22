@@ -1,0 +1,162 @@
+# Implementation Plan: ResQCore Disaster Response Web Application
+
+Recreate the complete Figma prototype for **ResQCore** (Disaster Response Platform) as a responsive, modern React application using Vite and Vanilla CSS. The app will faithfully reproduce all 13 reference screens, design tokens, interactive flows, and stateful operations.
+
+---
+
+## 1. Analysis of Reference Screens
+
+From inspecting the 13 PNG files in `./design`:
+1. **`Frame 1.png` (Authentication / Sign In)**:
+   - Split layout: Left hero banner with satellite imagery, "Clarity when it matters most", 14 districts / 24/7 / Secure statistics.
+   - Right form: "Welcome to ResQCore", work email, password, role dropdown (Command Operator, Field Responder, District Administrator), "Remember this device" checkbox, "Sign in to command center" CTA.
+2. **`Command Center.png` & `Loading state · Command Center.png` (Operational Overview)**:
+   - Sidebar navigation: Brand logo, Command Center (active), Live Map, Incidents (badge 24), Teams, Reports, Communication, Settings, Active incident pill ("Kerala monsoon 2026"), System Online status indicator.
+   - Top bar: Breadcrumb ("Command Center | OPERATIONS / KERALA"), Location dropdown ("Ernakulam, Kerala"), Weather widget ("27°C · Heavy rain"), User avatar ("Ananya Kumar, Command Operator").
+   - KPI metric cards: Active Incidents (24), People Affected (1,284), Rescue Teams Deployed (12 / 16), Relief Supplies (8,450).
+   - Area Intelligence map widget with map/satellite toggle, incident hotspot pins, zoom/pan controls, and active toast ("New High incident: INC-2048 · Flooding in Fort Kochi").
+   - Recent Alerts list (Flash flooding, Bridge collapse, Coastal evacuation).
+   - Live Camera Feeds with live status indicators and timestamps (Fort Kochi ferry, Mattancherry bridge, Vypin coast road).
+   - Loading skeleton state toggle to simulate live sync/data refresh.
+3. **`Live Map.png`, `Incident Details · Verify.png`, `Verified · Team assigned.png` (Live Response Map & Verification Flow)**:
+   - Full-bleed tactical map view with satellite/vector basemap layers, pinpoint coordinate telemetry (`9.9658° N · 76.2421° E · Zoom 13`), interactive pins colored by severity (High: Red, Medium: Amber, Info: Blue, Deployed: Green).
+   - Filter controls: Location search, Severity filter, Status filter, "Show teams" toggle.
+   - Right side panel / Incident Details drawer:
+     - Header with close button, incident badge (`INC-2048`, `High`), title (`Flash flooding`), location (`Fort Kochi · Ernakulam, Kerala`).
+     - Flood site imagery, impact metrics (320 affected, 14:32 IST reported).
+     - Field report text, coordinates, verification status pill (`Unverified`).
+     - Action button: `Verify incident`.
+     - When clicked: Transitions to verified state with green banner `● Verified · Response initiated`, team assignment card (`Bravo 02 · Water rescue · ETA 12 min`), bottom success toast, and updated map pin.
+4. **`Incidents.png`, `No team available · Escalated.png`, `Empty state · Incident search.png` (Incident Register)**:
+   - Filter bar: Search input, Severity filter, Status filter, Priority sorting, Summary count chips (6 High, 10 Medium, 8 Info).
+   - Escalation warning banner: "⚠ No team available - escalated | INC-2047 · Mattancherry bridge collapse · District response notified at 14:30 IST. [View incident ->]".
+   - Comprehensive incident table with status badges (`Unverified`, `Escalated`, `Responding`, `On site`, `Monitoring`).
+   - Clicking any incident row opens the incident detail drawer on the right.
+   - Pagination controls (`Showing 1–6 of 24 incidents`, `1 2 3 4`).
+   - Interactive search empty state matching `Empty state · Incident search.png` with "No matching incidents" illustration and "Clear filters" button.
+5. **`Teams.png` (Response Teams Hub)**:
+   - Status counters (12 deployed, 4 available).
+   - Search bar and status/specialization filters, Grid/List view toggle.
+   - Team cards for Alpha 01, Bravo 02, Charlie 03, Delta 04, Echo 05, Foxtrot 06 with live radio status, team lead, member count, assignment status, and interactive "Assign" / "View team" modal.
+6. **`Communication.png` (Operational Communications & Broadcast)**:
+   - Channels list: `# Ernakulam command` (3 unread), `# Field coordination`, `# Relief distribution`, `# Medical response`, Direct Messages.
+   - Live chat feed with timeline markers, user messages, and input box with send & attachment buttons.
+   - Operational alerts widget and "Send broadcast" composer with recipient selector and severity tagging.
+7. **`Reports.png` (Response Intelligence & Analytics)**:
+   - 24-hour summary metrics: Incidents recorded (72), People affected (1,284), Average response (18 min), People evacuated (946).
+   - Interactive heat concentration map with zone breakdown (Fort Kochi, Mattancherry, Vypin, Edappally).
+   - 24-hour incident trend graph (SVG spline curve with time axis).
+   - Active incident severity progress distribution.
+   - "Export PDF" / Print feature.
+8. **`ResQCore · Reusable UI kit.png` (Design System Tokens)**:
+   - Exact color tokens:
+     - Background: Deep Navy (`#060B14`, `#0A101D`, `#0D1527`, `#111C33`)
+     - Borders: `#1E293B`, `#26354D`
+     - Primary Accent: Royal Blue (`#2563EB`, `#3B82F6`)
+     - High Severity: Crimson Red (`#EF4444`, `#DC2626`, badge `#2C1518`)
+     - Medium Severity: Amber/Orange (`#F59E0B`, badge `#2B2011`)
+     - Info: Cyan/Blue (`#3B82F6`, badge `#0F1D33`)
+     - Deployed/Online: Emerald Green (`#10B981`, badge `#0B251D`)
+   - Typography: `Inter`, 8px spatial rhythm, 16px card radiuses.
+
+---
+
+## 2. Proposed Architecture & Project Structure
+
+The project will be built with **Vite + React (JavaScript)** and cleanly structured Vanilla CSS for styling:
+
+```
+resqcore/
+├── index.html
+├── package.json
+├── vite.config.js
+├── public/
+│   └── assets/           # Local maps, satellite imagery, flood site photos
+├── src/
+│   ├── main.jsx
+│   ├── App.jsx           # Root route manager & global state provider
+│   ├── index.css         # Global design tokens, typography, reset, scrollbars
+│   ├── context/
+│   │   └── AppContext.jsx # Shared live operational state (incidents, teams, messages, user role)
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Topbar.jsx
+│   │   │   ├── Badge.jsx
+│   │   │   ├── Toast.jsx
+│   │   │   └── MapView.jsx      # Interactive SVG/Canvas satellite map with pins & telemetry
+│   │   ├── drawers/
+│   │   │   └── IncidentDetailDrawer.jsx
+│   │   └── modals/
+│   │       ├── AssignTeamModal.jsx
+│   │       └── BroadcastToast.jsx
+│   ├── pages/
+│   │   ├── Login.jsx            # Frame 1.png
+│   │   ├── CommandCenter.jsx    # Command Center.png & Loading state
+│   │   ├── LiveMapPage.jsx      # Live Map.png & Incident Details Verify
+│   │   ├── IncidentsPage.jsx    # Incidents.png, Escalated & Empty state
+│   │   ├── TeamsPage.jsx        # Teams.png
+│   │   ├── CommunicationPage.jsx # Communication.png
+│   │   ├── ReportsPage.jsx      # Reports.png
+│   │   └── SettingsPage.jsx     # Settings
+│   ├── data/
+│   │   ├── initialData.js       # All authentic Kerala 2026 data matching reference designs
+│   │   └── mockMapData.js       # Geographic pin coordinates, satellite overlays
+│   └── styles/
+│       ├── layout.css
+│       ├── components.css
+│       └── pages.css
+```
+
+---
+
+## 3. Key Interactive Features & Logic
+
+- **Authentication Flow**: Login screen validation, "Remember this device", role selection (Command Operator, Field Responder, District Administrator), direct seamless login to Command Center, and logout from profile avatar.
+- **Incident Verification Flow**:
+  - Clicking `INC-2048` opens the Incident Details drawer.
+  - Clicking "Verify incident" transitions the status to `Verified`, assigns team `Bravo 02` (ETA 12 min), fires the "Team assigned" toast, and updates the incident badge across the map and table.
+- **Escalation Notification**:
+  - Banner alert for `INC-2047` (Mattancherry bridge collapse), clicking "View incident" focuses `INC-2047` and displays the escalated state.
+- **Team Assignment**:
+  - On the Teams page, clicking "Assign" on `Bravo 02` or `Charlie 03` opens an assignment modal allowing the user to dispatch them to an active incident.
+- **Live Communication**:
+  - Switch channels (`# Ernakulam command`, `# Field coordination`, direct messages).
+  - Send messages in real time (appended to conversation).
+  - Send emergency broadcasts with instant operational alerts toast.
+- **Filtering & Search**:
+  - Real-time search by location or incident ID in Incidents, Map, and Teams.
+  - Severity filter (`All`, `High`, `Medium`, `Info`).
+  - Status filter (`All`, `Unverified`, `Escalated`, `Responding`, `On site`, `Monitoring`).
+  - Demonstrates the empty state when no matching results are found, with a working "Clear filters" button.
+- **Interactive Map**:
+  - Toggle between Satellite view and Map view.
+  - Zoom controls (+ / -) and Reset view button.
+  - Clickable pins with hover tooltips and selection states matching the Figma UI.
+- **Data Persistence**:
+  - State changes (verification, team assignment, messages) persist in memory across all page tabs during the session.
+
+---
+
+## 4. Verification Plan
+
+### Automated / Browser Verification
+1. Initialize Vite React project and verify clean build with `npm run build`.
+2. Launch dev server on `http://localhost:5173`.
+3. Use `browser_subagent` to navigate through every screen:
+   - Login page (`/`)
+   - Command Center (`/command-center`)
+   - Live Map (`/live-map`) and trigger Incident Verification
+   - Incidents table (`/incidents`), trigger filters and empty state
+   - Teams page (`/teams`), trigger assignment
+   - Communication page (`/communication`), post message and send broadcast
+   - Reports page (`/reports`), check charts and PDF export trigger
+4. Capture high-resolution screenshots of each view and compare side-by-side with the reference PNGs in `./design`.
+
+---
+
+## 5. User Review Required
+> [!IMPORTANT]
+> The reference designs are based on **Vite + React (JavaScript)** with **Vanilla CSS** for pixel-perfect matching of the design system. No external paid map keys (Mapbox/Google) are required; we will provide high-resolution satellite imagery tiles and interactive SVG/Canvas tactical map rendering for complete offline reliability.
+
+Please confirm if you are ready for me to proceed with setting up the project and building the application.
